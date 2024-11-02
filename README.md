@@ -1,6 +1,3 @@
-Here's a template for a **README.md** file that describes your Data Warehouse project. This template provides sections for project details, setup instructions, and usage information.
-
----
 
 # DataWarehouse Project - Customer 360
 
