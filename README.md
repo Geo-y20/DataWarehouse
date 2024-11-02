@@ -1,47 +1,120 @@
 
-# DataWarehouse Project - Customer 360
+# Customer 360 for Retail E-commerce Data Warehouse
 
-This project is a **Customer 360 Data Warehouse** designed to store and analyze e-commerce customer data. By consolidating data into a star schema, the warehouse supports efficient querying and insights into customer behaviors, sales trends, and product performance. The project utilizes MySQL for the data warehouse, Jupyter Notebook for data transformation, and SQL scripts for table creation, data insertion, and analysis.
+## Overview
+
+This project is a **Customer 360 Data Warehouse** solution built to consolidate and analyze e-commerce customer data. The goal is to create a unified view of each customer by integrating data from various sources, enabling targeted marketing, improved customer experiences, and data-driven decision-making.
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Data Model](#data-model)
+- [Case Study](#case-study)
+- [Problem Statement](#problem-statement)
+- [Project Goals](#project-goals)
+- [Solution Outline](#solution-outline)
+- [Star Schema Design](#star-schema-design)
+  - [Dimension and Fact Tables](#dimension-and-fact-tables)
 - [Project Structure](#project-structure)
 - [Requirements](#requirements)
 - [Setup and Installation](#setup-and-installation)
 - [Usage](#usage)
 - [SQL Analysis](#sql-analysis)
+- [Expected Outcomes](#expected-outcomes)
 - [Future Enhancements](#future-enhancements)
 - [Contributing](#contributing)
 
-## Overview
+---
 
-The objective of this project is to build a data warehouse that enables a **Customer 360° view** for an e-commerce retailer. This centralized repository of data supports complex queries for understanding customer demographics, sales trends, product performance, and regional sales distribution. It follows a **Star Schema** model with a central fact table and supporting dimension tables.
+## Case Study
 
-## Data Model
+### Background
+An e-commerce company specializing in unique all-occasion gifts serves customers across the UK and internationally. The company’s customer data is spread across multiple systems (CRM, marketing platforms, and sales databases), which makes it difficult to obtain a complete view of each customer. This fragmentation results in inconsistent customer experiences and limits the company’s ability to execute targeted marketing effectively.
 
-The data warehouse is structured as a **Star Schema** with one central fact table (`Sales`) and several dimension tables:
+### Problem Statement
+The company struggles to deliver personalized customer experiences due to siloed data across multiple systems, which leads to:
+- Inefficiencies in understanding customer needs.
+- Missed opportunities for targeted product recommendations.
+- Inconsistent messaging across customer touchpoints.
 
-1. **Customer_Details** - Information about customers including location and demographics.
-2. **Product** - Details of products categorized by type.
-3. **Time** - Time information (day, month, quarter, year) for sales transactions.
-4. **Region** - Regional grouping of customer locations.
-5. **Sales (Fact Table)** - Central fact table containing transactional sales data.
+## Project Goals
 
-### Schema Diagram
+The primary objectives of this project are to:
+1. **Create a Unified Customer View**: Consolidate data on demographics, purchase history, preferences, and interactions to gain a complete view of each customer.
+2. **Improve Customer Segmentation**: Segment customers based on demographics, shopping behaviors, and preferences.
+3. **Enhance Marketing Campaigns**: Use customer segments for targeted marketing, increasing the likelihood of conversions.
+4. **Provide Personalized Recommendations**: Enable the use of recommendation algorithms to suggest relevant products to customers.
 
-```
-           Product
-              |
-Customer_Details---Sales---Time---Region
-              |
-            Region
-```
+## Solution Outline
+
+### Data Collection:
+- Collect customer data from the e-commerce system, CRM, and marketing platforms.
+- Use the **Online Retail II** dataset (UCI Machine Learning Repository) for this project, containing:
+  - Customer Information: ID, demographic details, location.
+  - Purchase History: Product details, quantities, and purchase amounts.
+  - Sales Transactions: Dates and itemized transaction details.
+
+### Data Transformation (Star Schema Design):
+- **Fact Table**:
+  - Sales Fact Table with details like InvoiceNo, Quantity, UnitPrice, CustomerID, StockCode, InvoiceDate.
+- **Dimension Tables**:
+  - Customer Dimension: `CustomerID`, `Country`, and demographic data.
+  - Product Dimension: `StockCode` and `Description`.
+  - Date Dimension: Breakdown of `InvoiceDate` into `Year`, `Month`, `Day`, and `Time`.
+
+### Data Loading:
+- Load transformed data into MySQL with foreign key relationships between the fact table and dimension tables.
+
+### Data Analysis and Reporting:
+- Generate insights on customer behavior, segmentation, high-value customers, and marketing effectiveness.
+- Create dashboards to visualize metrics like customer lifetime value, retention rates, and product affinities.
+
+---
+
+## Star Schema Design
+
+This schema consolidates customer data, product information, time details, regional data, and sales transactions into a unified structure. Below is a description of each table in the schema.
+
+### Dimension and Fact Tables
+
+#### 1. Customer Dimension (`Customer_Details`)
+Captures unique information about each customer, enabling analysis based on location and purchasing behavior.
+
+**Columns:**
+- `customer_id`: Primary Key, unique identifier for each customer.
+- `customer_name`: Customer's name.
+- `city`, `state`, `region`: Geographic details.
+
+#### 2. Product Dimension (`Product`)
+Contains product categories and subcategories, allowing for product-level insights.
+
+**Columns:**
+- `product_id`: Primary Key, unique identifier for each product.
+- `category`, `subcategory`: Classification of products.
+
+#### 3. Time Dimension (`Time`)
+Breaks down transaction dates for time-based analysis.
+
+**Columns:**
+- `time_id`: Primary Key, unique identifier for each date.
+- `order_date`, `day`, `month`, `quarter`, `year`: Date components.
+
+#### 4. Region Dimension (`Region`)
+Stores unique regions for geographic analysis.
+
+**Columns:**
+- `region_id`: Primary Key, unique identifier for each region.
+- `region_name`: Name of the region.
+
+#### 5. Fact Table (`Sales`)
+Central table that records transactional data, linked to all dimension tables.
+
+**Columns:**
+- `order_id`: Primary Key, unique identifier for each order.
+- Foreign Keys: `customer_id`, `product_id`, `time_id`, `region_id`.
+- `sales`, `discount`, `profit`: Transactional metrics.
+
+---
 
 ## Project Structure
-
-The project is organized as follows:
 
 ```plaintext
 .
@@ -65,7 +138,7 @@ The project is organized as follows:
 
 ### Python Libraries
 
-Install the required Python libraries by running:
+Install the required Python libraries:
 
 ```bash
 pip install -r requirements.txt
@@ -74,27 +147,28 @@ pip install -r requirements.txt
 ## Setup and Installation
 
 1. **Set up MySQL Database**:
-   - Create a MySQL database named `customer360` using:
+   - Create a MySQL database named `customer360`:
      ```sql
      CREATE DATABASE customer360;
      ```
 
 2. **Run SQL Scripts**:
    - Execute `create_tables.sql` to create the tables.
-   - Run `insert_data.sql` to insert data into the tables.
+   - Run `insert_data.sql` to insert data.
 
 3. **Configure Database Connection**:
-   - Ensure that the MySQL credentials in `Customer 360.ipynb` are correct for connecting to the database.
+   - Ensure the MySQL credentials in `Customer 360.ipynb` are correct.
 
 4. **Load Data via Jupyter Notebook**:
-   - Open `Customer 360.ipynb` in Jupyter Notebook.
-   - Run each cell to process, transform, and load data into the MySQL tables.
+   - Open `Customer 360.ipynb`.
+   - Run each cell to process and load data into MySQL tables.
 
 ## Usage
 
-1. **Exploratory Data Analysis**:
-   - Run analysis queries from `analysis_queries.sql` for insights on sales, customer demographics, and product performance.
-   
+### Run Analysis Queries
+
+1. **Open `analysis_queries.sql`** and run each query in MySQL Workbench or another SQL editor.
+
 2. **Sample Queries**:
    - **Monthly Sales Analysis**:
      ```sql
@@ -114,36 +188,14 @@ pip install -r requirements.txt
      LIMIT 5;
      ```
 
-## SQL Analysis
+## Expected Outcomes
 
-The `analysis_queries.sql` file contains various SQL queries for analyzing the data warehouse:
-
-- **Yearly Sales Growth**: Compare yearly sales growth across different regions and customer demographics.
-- **Top-Selling Products by Category**: Identify popular product categories.
-- **Customer Segmentation by Region**: Analyze customer buying patterns based on regional demographics.
-- **Sales by Month and Quarter**: Analyze seasonal trends and peak purchasing periods.
-
-### Key Analysis Queries
-
-1. **Yearly Growth in Sales**:
-   ```sql
-   SELECT t1.year, SUM(t2.sales) AS total_sales
-   FROM Time t1
-   JOIN Sales s ON t1.time_id = s.time_id
-   GROUP BY t1.year;
-   ```
-
-2. **Quarterly Sales**:
-   ```sql
-   SELECT t.quarter, SUM(s.sales) AS quarterly_sales
-   FROM Sales s
-   JOIN Time t ON s.time_id = t.time_id
-   GROUP BY t.quarter;
-   ```
+- **Improved Customer Experience**: Personalized interactions across customer touchpoints.
+- **Increased Sales**: Through targeted marketing and recommendations.
+- **Operational Efficiency**: Reduced data handling and increased insight accuracy.
 
 ## Future Enhancements
 
-- **Integration with BI Tools**: Connect the data warehouse to business intelligence tools like Tableau or Power BI for enhanced visualization.
-- **More Dimensions**: Add additional dimensions such as `Product Supplier` and `Customer Loyalty`.
-- **Data Refresh Automation**: Set up an ETL pipeline to automate data extraction and transformation.
-
+- **Integration with BI Tools**: Connect to BI tools like Tableau or Power BI for visualization.
+- **Additional Dimensions**: Add more dimensions (e.g., `Product Supplier`, `Customer Loyalty`).
+- **Data Refresh Automation**: Automate the ETL process for regular data updates.
